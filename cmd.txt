@@ -1,0 +1,6 @@
+# Sample cmd
+
+# observation file
+$python cors_download.py 2017 170 mami ~/path/to/directory/ -t obs
+#Navigation file
+$python cors_download.py 2017 170 mami ~/path/to/directory/ -t nav
