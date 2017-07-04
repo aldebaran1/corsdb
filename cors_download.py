@@ -31,24 +31,26 @@ def getRinexObs(year,day,site,odir,ftype,clobber=False):
 
 #%% get available files for this day
     with ftplib.FTP(url[1],'anonymous','guest',timeout=15) as F:
-        rpath = url[2] + '/' + str(year) + '/' + day + '/' + str(site) + '/'
-        #print (rpath)
-        F.cwd(rpath)
-        
-        fn_year = str(year)[2:]
-        filename = site + day + '0.' + fn_year + 'o.gz'
-        #download observation file
         if ftype == 'obs':
+            rpath = url[2] + '/' + str(year) + '/' + day + '/' + str(site) + '/'
+            F.cwd(rpath)
+        
+            fn_year = str(year)[2:]
+            filename = site + day + '0.' + fn_year + 'o.gz'
+            #download observation file
             ofn = odir + filename
+            print ('Downloading from: ', ofn)
             with open( ofn, 'wb') as h:
                 F.retrbinary('RETR {}'.format(filename), h.write)
                 sleep(1)
-        elif ftype == 'nav':    
+        #download navigation file
+        elif ftype == 'nav':
+            fn_year = str(year)[2:]
             rpath2 = url[2] + '/' + str(year) + '/' + day + '/'
-            #download navigation faile
             F.cwd(rpath2)
             navfilename = 'brdc' + day + '0.' + fn_year + 'n.gz'
             ofn = odir + navfilename
+            print (ofn)
             with open(ofn, 'wb') as h:
                 F.retrbinary('RETR {}'.format(navfilename), h.write)
                 sleep(1)
