@@ -9,7 +9,15 @@ import os
 import glob
 from time import sleep
 import pyRinex
+#import file_convert
+import subprocess
 
+def callsubprocess(file):
+    try:
+        subprocess.call('python3 file_convert.py -o ' + file, shell=True)
+    except:
+        raise ValueError 
+        
 def convertObs2HDF(folder=None, year=str(2017)):
     yr = year[-2:]
     wlstr ='*.'+yr+'o'
@@ -17,9 +25,11 @@ def convertObs2HDF(folder=None, year=str(2017)):
     flist = glob.glob(filestr)
 #    print (flist)
     for file in flist:
-        print ('Converting file: ', file)
-        pyRinex.writeRinexObs2Hdf(file)
-        sleep(60*5)
+        new_fname = file[:-3] + 'h5'
+        if not os.path.exists(new_fname):
+            print ('Converting file: ', file)
+            callsubprocess(file)
+            sleep(4)
 def convertYaml(folder=None):
     pyRinex.writeRinexObsHeaders2yaml(folder)
     
