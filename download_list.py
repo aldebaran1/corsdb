@@ -45,7 +45,7 @@ def downloadObsRinexList(state=None, day=None, folder=None, t=None):
     
     if t == 'obs':
         if rxlist.shape[0] == 0:
-            print ('No receivers inthe list. Please correct the prexif for state')
+            print ('No receivers in the list. Please correct the prexif for state')
             exit()
         save_dir = folder + state + '/' + day + '/'
         
