@@ -50,7 +50,7 @@ def getRinexObs(year,day,site,odir,ftype,clobber=False):
             F.cwd(rpath2)
             navfilename = 'brdc' + day + '0.' + fn_year + 'n.gz'
             ofn = odir + navfilename
-            print (ofn)
+            print ('Downloading: ', ofn)
             with open(ofn, 'wb') as h:
                 F.retrbinary('RETR {}'.format(navfilename), h.write)
                 sleep(1)
