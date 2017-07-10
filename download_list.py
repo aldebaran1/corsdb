@@ -40,18 +40,27 @@ def downloadObsRinexList(state=None, day=None, folder=None, t=None):
         day = str(d.timetuple().tm_yday - 1)
     else:
         year = datetime.now().strftime('%Y')
-    save_dir = folder + state + '/' + day + '/'
     
-    if rxlist.shape[0] == 0:
-        print ('No receivers inthe list. Please correct the prexif for state')
-        exit()
+    
+    
     if t == 'obs':
+        if rxlist.shape[0] == 0:
+            print ('No receivers inthe list. Please correct the prexif for state')
+            exit()
+        save_dir = folder + state + '/' + day + '/'
+        
         subprocess.call('mkdir /home/smrak/sharedrive/cors/' + state + '/' + day + '/', shell=True)
         for line in rxlist:
             subprocess.call('sudo python3 /home/smrak/Documents/cors/cors_download.py ' + 
                             year + ' ' + day  + ' ' + line + ' ' + save_dir  + ' ' + '-t obs', shell=True)
-    print (rxlist.shape[0])
-    print (save_dir)
+        print (rxlist.shape[0])
+        print (save_dir)
+        
+    elif t == 'nav':
+        subprocess.call('sudo python3 /home/smrak/Documents/cors/cors_download.py ' + 
+                            year + ' ' + day  + ' ' + 'x' + ' ' + folder  + ' ' + '-t nav', shell=True)
+        
+    
     
 if __name__ == '__main__':
     from argparse import ArgumentParser
