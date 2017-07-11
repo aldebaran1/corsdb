@@ -227,6 +227,6 @@ def plotTrajectories(day='184', state='tn', timelim=None):
         print ('Something went wrong. Chack that state and hdffilenamelist are of the same type and length')
     
     data.close()
-plotTrajectories(state=['tn', 'mo', 'ky', 'al', 'sc', 'ga', 'ar', 'ms'], 
+plotTrajectories(state=['tn', 'mo', 'ky', 'al', 'sc', 'ga', 'ar', 'ms', 'nc'], 
                  timelim=[datetime.datetime(2017,7,3,17,25,0),
                           datetime.datetime(2017,7,3,17,35,0)])
