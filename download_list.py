@@ -11,6 +11,7 @@ import ftplib
 import numpy as np
 import subprocess
 from datetime import datetime
+import yaml
 
 def getStateList(state):
     url =  urlparse('ftp://geodesy.noaa.gov/cors/rinex/2017/150/')# 'ftp://geodesy.noaa.gov'
@@ -29,10 +30,22 @@ def getStateList(state):
     
     return list_out
 
-def downloadObsRinexList(state=None, day=None, folder=None, t=None):
+def downloadObsRinexList(state=None, day=None, folder=None, t=None, filepath=None):
     """
     """
-    rxlist = getStateList(state)
+    if filepath is not None:
+        statelist = []
+        rxlist = []
+        state = None
+        with(open(filepath,'r')) as f:
+            l = f.readlines()
+            for line in l:
+                arr = line.rstrip('\n').split(',')
+                statelist.append(arr[0])
+                rxlist.append(arr[1:])
+            
+    else:
+        rxlist = getStateList(state)
     
     if day == 'yesterday':
         d = datetime.now()
@@ -42,25 +55,36 @@ def downloadObsRinexList(state=None, day=None, folder=None, t=None):
         year = datetime.now().strftime('%Y')
     
     
-    
-    if t == 'obs':
-        if rxlist.shape[0] == 0:
-            print ('No receivers in the list. Please correct the prexif for state')
-            exit()
-        save_dir = folder + state + '/' + day + '/'
-        
-        subprocess.call('mkdir /home/smrak/sharedrive/cors/' + state + '/' + day + '/', shell=True)
-        for line in rxlist:
+    if isinstance(state, str):
+        if (t == 'obs'):
+            if rxlist.shape[0] == 0:
+                print ('No receivers in the list. Please correct the prefix for state')
+                exit()
+            save_dir = folder + state + '/' + day + '/'
+            
+            subprocess.call('mkdir ' + folder + '/' + state, shell=True)
+            subprocess.call('mkdir ' + folder + '/' + state + '/' + day, shell=True)
+            for line in rxlist:
+                subprocess.call('sudo python3 /home/smrak/Documents/cors/cors_download.py ' + 
+                                year + ' ' + day  + ' ' + line + ' ' + save_dir  + ' ' + '-t obs', shell=True)
+            print (rxlist.shape[0])
+            print (save_dir)
+            
+        elif (t == 'nav'):
             subprocess.call('sudo python3 /home/smrak/Documents/cors/cors_download.py ' + 
-                            year + ' ' + day  + ' ' + line + ' ' + save_dir  + ' ' + '-t obs', shell=True)
-        print (rxlist.shape[0])
-        print (save_dir)
-        
-    elif t == 'nav':
-        subprocess.call('sudo python3 /home/smrak/Documents/cors/cors_download.py ' + 
-                            year + ' ' + day  + ' ' + 'x' + ' ' + folder  + ' ' + '-t nav', shell=True)
-        
-    
+                                year + ' ' + day  + ' ' + 'x' + ' ' + folder  + ' ' + '-t nav', shell=True)
+    elif isinstance(statelist, list):
+        i = 0
+        for state in statelist:
+            save_dir = folder + state + '/' + day + '/'
+            subprocess.call('mkdir ' + folder + '/' + state, shell=True)
+            subprocess.call('mkdir ' + folder + '/' + state + '/' + day, shell=True)
+            print ('Saving observation files for the state of '+state)
+            for line in rxlist[i]:
+                subprocess.call('sudo python3 /home/smrak/Documents/cors/cors_download.py ' + 
+                                year + ' ' + day  + ' ' + line + ' ' + save_dir  + ' ' + '-t obs', shell=True)
+            i+=1
+                
     
 if __name__ == '__main__':
     from argparse import ArgumentParser
@@ -70,6 +94,7 @@ if __name__ == '__main__':
     p.add_argument('-f', "--dest_folder",help='IPP lat lon data with time stanps in h5file', 
                    default='/home/smrak/sharedrive/cors/', type=str)
     p.add_argument('-t', '--type', help='Type of file to download. Observation of navigation. Type "nav" or "obs"', default='obs')
+    p.add_argument('-p', '--path', help='path to the filelist')
     P = p.parse_args()
     
-    downloadObsRinexList(state = P.state, day=P.day, folder=P.dest_folder, t=P.type)
+    downloadObsRinexList(state = P.state, day=P.day, folder=P.dest_folder, t=P.type, filepath=P.path)
