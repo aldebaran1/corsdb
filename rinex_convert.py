@@ -22,6 +22,7 @@ def convertObs2HDF(folder=None, year=str(2017), sufix=None):
     if sufix is None:
         yr = year[-2:]
         wlstr ='*.'+yr+'o'
+        dec = ''
     else:
         wlstr = sufix
         dec = str(sufix)[2:4]

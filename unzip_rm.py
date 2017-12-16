@@ -13,13 +13,15 @@ from time import sleep
 
 #folder = '/home/smrak/sharedrive/cors/al/184/'
 def unzipfolder(folder):
-    wlstr ='*.gz'
-    filestr = os.path.join(folder,wlstr)
-    flist = glob.glob(filestr)
-    for file in flist:
-        print('Unizipping: ', file)
-        subprocess.call('gzip -d ' + file, shell=True)
-        sleep(5)
+    suffix = ['*.gz', '*.Z']
+    for wlstr in suffix:
+#    wlstr ='*.gz'
+        filestr = os.path.join(folder,wlstr)
+        flist = glob.glob(filestr)
+        for file in flist:
+            print('Unizipping: ', file)
+            subprocess.call('gzip -d ' + file, shell=True)
+            sleep(5)
 #for file in flist:
 #    print('Deleting: ', file)
 #    subprocess.call('rm -r ' + file, shell=True)

@@ -15,7 +15,6 @@ import h5py
 import yaml
 import os,glob
 import datetime
-import matplotlib.pyplot as plt
 from pymap3d.coordconv3d import ecef2geodetic
 
 def plotCorsMap():
